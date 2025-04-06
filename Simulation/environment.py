@@ -118,17 +118,17 @@ class environment:
         filename = str(uuid.uuid4())
         #np.save("/its/home/drs25/Documents/GitHub/Quadruped/Code/data_collect_proj/trials_all/"+str(filename),history)
         return fitness(self.quad,history=history),history,photos_l
-    def step(self,agent,action,delay=False,gen=0):
+    def step(self,agent,action,delay=False,gen=0,step=10):
         if self.show:
             agent.dt=p.readUserDebugParameter(self.x_slider)
         motor_positions=agent.get_positions(np.array(self.quad.motors))
         self.quad.setPositions(motor_positions)
-        for k in range(10): #update simulation
+        for k in range(step): #update simulation
             p.stepSimulation()
             if delay: time.sleep(1./240.)
             else: p.setTimeStep(1./240.)
             basePos, baseOrn = p.getBasePositionAndOrientation(self.robot_id) # Get model position
-            p.resetDebugVisualizerCamera( cameraDistance=0.3, cameraYaw=75, cameraPitch=-20, cameraTargetPosition=basePos) # fix camera onto model
+            p.resetDebugVisualizerCamera( cameraDistance=0.8, cameraYaw=75, cameraPitch=-20, cameraTargetPosition=basePos) # fix camera onto model
             if self.quad.hasFallen():
                 
                 break
@@ -170,7 +170,12 @@ if __name__=="__main__":
             return np.clip(motor_commands, 0, 1)  # Return motor positions (normalized)
     cpg=newCPG(num_n=25)
     print("commence trial...")
-    env.runTrial(cpg,500,1)
+    #env.runTrial(cpg,500,1)
+    time.sleep(3)
+    print("move")
+    action=np.zeros((25))
+    action[0]=100
+    env.step(cpg,action,1)
     print("trial done")
     time.sleep(5)
     env.close()
