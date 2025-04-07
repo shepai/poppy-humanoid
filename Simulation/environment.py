@@ -2,13 +2,14 @@
 import sys
 sys.path.insert(1, '/its/home/drs25/Documents/GitHub/poppy-humanoid/hardware/URDF/robots')#
 sys.path.insert(1, r'C:\Users\dexte\Documents\GitHub\poppy-humanoid\hardware\URDF\robots')
-path="C:/Users/dexte/Documents/GitHub/poppy-humanoid/hardware/URDF/robots/"
+#path="C:/Users/dexte/Documents/GitHub/poppy-humanoid/hardware/URDF/robots/"
+path="/its/home/drs25/Documents/GitHub/poppy-humanoid/hardware/URDF/robots/"
 import pybullet as p
 import pybullet_data
 import time
 import numpy as np
 from poppyControl import *
-
+import uuid
 def demo(variable,history={}):
     return 0
 class environment:
@@ -56,13 +57,15 @@ class environment:
         p.changeDynamics(self.plane_id, -1, lateralFriction=self.friction)
         p.setPhysicsEngineParameter(enableConeFriction=0)
         p.changeDynamics(self.plane_id, -1, lateralFriction=self.friction)
-        initial_position = [0, 0, 5.8]  # x=1, y=2, z=0.5
+        initial_position = [0, 0, 0.45]  # x=1, y=2, z=0.5
         initial_orientation = p.getQuaternionFromEuler([0, 0, 0])  # No rotation (Euler angles to quaternion)
         flags = p.URDF_USE_SELF_COLLISION
+
         self.robot_id = p.loadURDF(path+"Poppy_Humanoid.URDF", initial_position, initial_orientation,flags=flags)
         p.changeDynamics(self.robot_id, -1, lateralFriction=self.friction)
         self.quad=Poppy(p,self.robot_id,self.plane_id)
-        self.quad.neutral=[-30, 0, 40, -30, 50, -10, 0, 10, 20, 30, -30, 50]
+
+        #self.quad.neutral=[-30, 0, 40, -30, 50, -10, 0, 10, 20, 30, -30, 50]
         self.quad.reset()
         for i in range(500):
             p.stepSimulation()
@@ -144,6 +147,7 @@ if __name__=="__main__":
     env=environment(1)
     env.reset()
     sys.path.insert(1, 'C:/Users/dexte/Documents/GitHub/Quadruped/Code')
+    sys.path.insert(1, '/its/home/drs25/Documents/GitHub/Quadruped/Code')
     from CPG import *
     class newCPG(CTRNNQuadruped):
         def get_positions(self,inputs,motors=None):
